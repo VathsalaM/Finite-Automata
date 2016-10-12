@@ -1,23 +1,33 @@
-/**
- * Created by vathsala on 08/10/16.
- */
-public class DFA {
-    private final Tuple tuple;
+import java.util.HashSet;
 
-    public DFA(Tuple tuple){
-        this.tuple = tuple;
-    }
+class DFA {
+  private final HashSet<State> states;
+  private final HashSet<String> alphabets;
+  private final Transition transition;
+  private final State initialState;
+  private final HashSet<State> finalStates;
 
-    public boolean Test(String string) {
-        State currentState = this.tuple.getInitialState();
-        if(string.length()<1){
-            return this.tuple.isFinalState(currentState);
-        }
-        for (String alphabet : string.split("")) {
-            currentState = this.tuple.Transition.Transit(currentState,alphabet);
-        }
-        return this.tuple.isFinalState(currentState);
+  DFA(HashSet<State> states, HashSet<String> alphabets, Transition transition, State initialState, HashSet<State> finalStates) {
+    this.states = states;
+    this.alphabets = alphabets;
+    this.transition = transition;
+    this.initialState = initialState;
+    this.finalStates = finalStates;
+  }
+
+  boolean isFinalState(State currentState){
+    return this.finalStates.contains(currentState);
+  }
+  boolean Verify(String string) {
+    State currentState = this.initialState;
+    if (string.length() < 1) {
+      return this.isFinalState(currentState);
     }
+    for (String alphabet : string.split("")) {
+      currentState = this.transition.Transit(currentState, alphabet);
+    }
+    return this.isFinalState(currentState);
+  }
 
 
 }
