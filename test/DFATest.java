@@ -6,6 +6,23 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
 public class DFATest {
+
+  @Test
+  public void Should_recognise_alphabets_only_from_alphabet_set() throws Exception {
+    State state0 = new State("q0");
+    HashSet<State> states = new HashSet<>(asList(state0));
+    String alphabet0 = "0";
+    String alphabet1 = "1";
+    HashSet<String> alphabets = new HashSet<>(asList(alphabet0, alphabet1));
+    Transition transition = new Transition();
+    transition.Add(state0, alphabet0, state0);
+    transition.Add(state0, alphabet1, state0);
+    HashSet<State> finalStates = new HashSet<>(asList(state0));
+    DFA dfa = new DFA(states, alphabets, transition, state0, finalStates);
+    assertEquals(true, dfa.Verify("10"));
+    assertEquals(false, dfa.Verify("1a0"));
+  }
+
   @Test
   public void Should_recognise_all_strings_that_begin_with_1_and_contain_the_string_001() throws Exception {
     State state0 = new State("q0");
@@ -14,7 +31,7 @@ public class DFATest {
     State state3 = new State("q3");
     State state4 = new State("q4");
     State state5 = new State("q5");
-    HashSet<State> states = new HashSet<>(asList(state0, state1));
+    HashSet<State> states = new HashSet<>(asList(state0, state1, state2, state3, state4, state5));
     String alphabet0 = "0";
     String alphabet1 = "1";
     HashSet<String> alphabets = new HashSet<>(asList(alphabet0, alphabet1));
@@ -50,7 +67,8 @@ public class DFATest {
     State state3 = new State("q3");
     State state4 = new State("q4");
     State state5 = new State("q5");
-    HashSet<State> states = new HashSet<>(asList(state0, state1));
+    HashSet<State> states = new HashSet<>(asList(state0, state1, state2, state3, state4, state5));
+
     String alphabet0 = "0";
     String alphabet1 = "1";
     HashSet<String> alphabets = new HashSet<>(asList(alphabet0, alphabet1));
@@ -130,7 +148,8 @@ public class DFATest {
     State state2 = new State("q2");
     State state3 = new State("q3");
     State state4 = new State("q4");
-    HashSet<State> states = new HashSet<>(asList(state0, state1));
+    HashSet<State> states = new HashSet<>(asList(state0, state1, state2, state3, state4));
+
     String alphabet0 = "0";
     String alphabet1 = "1";
     HashSet<String> alphabets = new HashSet<>(asList(alphabet0, alphabet1));
@@ -207,7 +226,8 @@ public class DFATest {
     State state2 = new State("q2");
     State state3 = new State("q3");
     State state4 = new State("q4");
-    HashSet<State> states = new HashSet<>(asList(state0, state1));
+    HashSet<State> states = new HashSet<>(asList(state0, state1, state2, state3, state4));
+
     String alphabet0 = "0";
     String alphabet1 = "1";
     HashSet<String> alphabets = new HashSet<>(asList(alphabet0, alphabet1));
@@ -240,7 +260,8 @@ public class DFATest {
     State state5 = new State("q5");
     State state6 = new State("q6");
 
-    HashSet<State> states = new HashSet<>(asList(state0, state1));
+    HashSet<State> states = new HashSet<>(asList(state0, state1, state2, state3, state4, state5, state6));
+
     String alphabet0 = "0";
     String alphabet1 = "1";
     HashSet<String> alphabets = new HashSet<>(asList(alphabet0, alphabet1));

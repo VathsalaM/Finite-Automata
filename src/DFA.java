@@ -15,19 +15,23 @@ class DFA {
     this.finalStates = finalStates;
   }
 
-  boolean isFinalState(State currentState){
-    return this.finalStates.contains(currentState);
+  boolean isStatePresent(HashSet<State> states, State currentState){
+    return states.contains(currentState);
   }
   boolean Verify(String string) {
     State currentState = this.initialState;
+    if (!this.isStatePresent(this.states,currentState)){
+      return false;
+    }
     if (string.length() < 1) {
-      return this.isFinalState(currentState);
+      return this.isStatePresent( this.finalStates,currentState);
     }
     for (String alphabet : string.split("")) {
+      if(!this.alphabets.contains(alphabet)){
+        return false;
+      }
       currentState = this.transition.Transit(currentState, alphabet);
     }
-    return this.isFinalState(currentState);
+    return this.isStatePresent(this.finalStates,currentState);
   }
-
-
 }
