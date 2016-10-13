@@ -1,9 +1,9 @@
 package dfa;
 
-class State {
+public class State {
   private final String name;
 
-  State(String name) {
+  public State(String name) {
     this.name = name;
   }
 }

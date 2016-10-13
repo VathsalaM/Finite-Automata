@@ -2,14 +2,14 @@ package dfa;
 
 import java.util.HashSet;
 
-class DFA {
+public class DFA {
   private final HashSet<State> states;
   private final HashSet<String> alphabets;
   private final Transition transition;
   private final State initialState;
   private final HashSet<State> finalStates;
 
-  DFA(HashSet<State> states, HashSet<String> alphabets, Transition transition, State initialState, HashSet<State> finalStates) {
+  public DFA(HashSet<State> states, HashSet<String> alphabets, Transition transition, State initialState, HashSet<State> finalStates) {
     this.states = states;
     this.alphabets = alphabets;
     this.transition = transition;
@@ -20,7 +20,7 @@ class DFA {
   boolean isStatePresent(HashSet<State> states, State currentState){
     return states.contains(currentState);
   }
-  boolean Verify(String string) {
+  public boolean Verify(String string) {
     State currentState = this.initialState;
     if (!this.isStatePresent(this.states,currentState)){
       return false;

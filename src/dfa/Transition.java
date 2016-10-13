@@ -2,14 +2,14 @@ package dfa;
 
 import java.util.HashMap;
 
-class Transition {
+public class Transition {
   private HashMap<State, HashMap<String, State>> transitions;
 
-  Transition() {
+  public Transition() {
     this.transitions = new HashMap<>();
   }
 
-  void Add(State currentState, String alphabet, State nextState) {
+  public void Add(State currentState, String alphabet, State nextState) {
     if (this.transitions.containsKey(currentState)) {
       HashMap<String, State> oldValues = this.transitions.get(currentState);
       oldValues.put(alphabet, nextState);
