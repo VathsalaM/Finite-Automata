@@ -1,3 +1,5 @@
+package dfa;
+
 import java.util.HashSet;
 
 class DFA {

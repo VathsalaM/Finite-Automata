@@ -1,3 +1,5 @@
+package dfa;
+
 import org.junit.Test;
 
 import java.util.HashSet;

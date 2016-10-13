@@ -1,3 +1,5 @@
+package dfa;
+
 class State {
   private final String name;
 
