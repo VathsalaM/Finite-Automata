@@ -1,15 +1,17 @@
 package dfa;
 
+import common.FiniteAutomata;
+
 import java.util.HashSet;
 
-public class DFA {
-  private final HashSet<State> states;
+public class DFA implements FiniteAutomata {
+  private final HashSet<String> states;
   private final HashSet<String> alphabets;
   private final Transition transition;
-  private final State initialState;
-  private final HashSet<State> finalStates;
+  private final String initialState;
+  private final HashSet<String> finalStates;
 
-  public DFA(HashSet<State> states, HashSet<String> alphabets, Transition transition, State initialState, HashSet<State> finalStates) {
+  public DFA(HashSet<String> states, HashSet<String> alphabets, Transition transition, String initialState, HashSet<String> finalStates) {
     this.states = states;
     this.alphabets = alphabets;
     this.transition = transition;
@@ -17,11 +19,12 @@ public class DFA {
     this.finalStates = finalStates;
   }
 
-  boolean isStatePresent(HashSet<State> states, State currentState){
+  boolean isStatePresent(HashSet<String> states, String currentState){
     return states.contains(currentState);
   }
+
   public boolean Verify(String string) {
-    State currentState = this.initialState;
+    String currentState = this.initialState;
     if (!this.isStatePresent(this.states,currentState)){
       return false;
     }
