@@ -19,29 +19,22 @@ public class NFA implements FiniteAutomata {
   }
 
   private States getCurrentStates(States currentStates) {
-//    System.out.println("currentStates: "+currentStates);
     Alphabet epsilon = new Alphabet("e");
     States newStates = new States();
     newStates.add(currentStates);
     for (State state : currentStates.getStates()) {
       States tempStates = (States) this.transition.Transit(state,epsilon);
-//      System.out.println("resultant e : "+tempStates);
       if(tempStates!=null){
-//        System.out.println("==>"+tempStates);
         newStates.add(this.getCurrentStates(tempStates));
       }
     }
-//    System.out.println("new States returning ==> "+newStates);
     return newStates;
   }
 
   public boolean Verify(String string) {
-    System.out.println(string);
-    System.out.println(this.transition);
     States currentStates = new States();
     currentStates.add(this.initialState);
     currentStates = this.getCurrentStates(currentStates);
-//    System.out.println("current states: "+currentStates);
     for (String alphabet : string.split("")) {
       States newStates = new States();
       for (State state : currentStates.getStates()) {
@@ -52,7 +45,10 @@ public class NFA implements FiniteAutomata {
       }
       currentStates = getCurrentStates(newStates);
     }
-//    System.out.println("finalStates==>"+currentStates);
     return this.finalStates.contains(currentStates);
+  }
+
+  public DFA ToDFA() {
+    return null;
   }
 }

@@ -3,6 +3,7 @@ package testRunner;
 
 import automata.Builder;
 import automata.FiniteAutomata;
+import automata.NFA;
 import automata.Parser;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,31 +44,39 @@ public class TestRunner {
       String name = rootObject.get("name").toString();
       JSONObject tuple = rootObject.getJSONObject("tuple");
 
-      Builder builder = Builder.New(tuple, type);
-
-      FiniteAutomata fa;
-      if (type.equals("dfa")) {
-        fa = builder.buildDFA();
-      } else {
-        fa = builder.buildNFA();
-      }
       if (args.length > 1 && !args[1].equals(type) && !args[1].equals("all")) {
         continue;
       }
       if (args.length > 2 && !args[2].equals(name)) {
         continue;
       }
-      TestRunner tr = new TestRunner();
 
+      Builder builder = Builder.New(tuple, type);
+
+      FiniteAutomata fa = null;
+      if (type.equals("dfa")) {
+        fa = builder.buildDFA();
+      } else if (type.equals("nfa")){
+        fa = builder.buildNFA();
+      } else {
+        fa = ((NFA) builder.buildNFA()).ToDFA();
+      }
+
+      System.out.println("Test executing: "+type);
+      TestRunner tr = new TestRunner();
       boolean result = tr.runPassCases(fa, pass_cases) && tr.runFailCases(fa, fail_cases);
 
       String message = (++count) + ". " + name + ": ";
       if (result) {
         totalPassCount++;
         System.out.println(message + "pass");
+        System.out.println("pass_cases: " + pass_cases);
+        System.out.println("fail_cases: " + fail_cases);
       } else {
         totalFailCount++;
         System.out.println(message + "fail");
+        System.out.println("pass_cases: " + pass_cases);
+        System.out.println("fail_cases: " + fail_cases);
       }
     }
     System.out.println("\nTotal tests passing: " + totalPassCount);
