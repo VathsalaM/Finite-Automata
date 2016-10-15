@@ -1,5 +1,5 @@
 package automata;
 
 public interface FiniteAutomata {
-  boolean Verify(String string);
+  boolean verify(String string);
 }

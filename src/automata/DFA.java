@@ -17,7 +17,7 @@ public class DFA implements FiniteAutomata {
     this.finalStates = finalStates;
   }
 
-  public boolean Verify(String string) {
+  public boolean verify(String string) {
     State currentState = this.initialState;
     if (!this.states.contains(currentState)){
       return false;

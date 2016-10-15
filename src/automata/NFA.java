@@ -31,7 +31,7 @@ public class NFA implements FiniteAutomata {
     return newStates;
   }
 
-  public boolean Verify(String string) {
+  public boolean verify(String string) {
     States currentStates = new States();
     currentStates.add(this.initialState);
     currentStates = this.getCurrentStates(currentStates);
