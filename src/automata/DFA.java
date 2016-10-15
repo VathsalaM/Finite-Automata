@@ -17,17 +17,13 @@ public class DFA implements FiniteAutomata {
     this.finalStates = finalStates;
   }
 
-  private boolean isStatePresent(States states, State currentState){
-    return states.contains(currentState);
-  }
-
   public boolean Verify(String string) {
     State currentState = this.initialState;
-    if (!this.isStatePresent(this.states,currentState)){
+    if (!this.states.contains(currentState)){
       return false;
     }
     if (string.length() < 1) {
-      return this.isStatePresent( this.finalStates,currentState);
+      return this.finalStates.contains(currentState);
     }
     for (String alphabet : string.split("")) {
       if(!this.alphabets.contains(new Alphabet(alphabet))){
@@ -35,6 +31,6 @@ public class DFA implements FiniteAutomata {
       }
       currentState = (State) this.transition.Transit(currentState, new Alphabet(alphabet));
     }
-    return this.isStatePresent(this.finalStates,currentState);
+    return this.finalStates.contains(currentState);
   }
 }
