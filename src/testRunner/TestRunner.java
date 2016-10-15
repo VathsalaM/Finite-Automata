@@ -51,10 +51,11 @@ public class TestRunner {
       } else {
         fa = builder.buildNFA();
       }
-      if(args.length>1) {
-        if (!args[1].equals(type) && !args[1].equals("all")) {
-          continue;
-        }
+      if (args.length > 1 && !args[1].equals(type) && !args[1].equals("all")) {
+        continue;
+      }
+      if (args.length > 2 && !args[2].equals(name)) {
+        continue;
       }
       TestRunner tr = new TestRunner();
 

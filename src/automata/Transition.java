@@ -21,7 +21,13 @@ public class Transition {
   }
 
   IState Transit(State currentState, Alphabet alphabet) {
-    return this.transitions.get(currentState).get(alphabet);
+    IState result;
+    try {
+      result = this.transitions.get(currentState).get(alphabet);
+    }catch (NullPointerException e){
+      result = null;
+    }
+    return result;
   }
 
   @Override

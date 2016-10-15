@@ -53,7 +53,7 @@ public class Builder {
         if (type.equals("dfa")) {
           nextState = new State(states.get(alphabet).toString());
         } else {
-          nextState = createStates(jsonTransition.getJSONArray(key));
+          nextState = createStates(jsonTransition.getJSONObject(key).getJSONArray(alphabet));
         }
         transition.Add(new State(key), new Alphabet(alphabet), nextState);
       }

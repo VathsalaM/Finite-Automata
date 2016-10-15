@@ -1,8 +1,10 @@
 package automata;
 
 import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
-public class States implements IState{
+class States implements IState{
 
   private HashSet<State> states;
 
@@ -20,6 +22,13 @@ public class States implements IState{
 
   boolean contains(State state){
     return this.states.contains(state);
+  }
+  boolean contains(States otherStates){
+    boolean result = false;
+    for (State state : otherStates.states) {
+      result = this.states.contains(state);
+    }
+    return result;
   }
 
   int length() {
@@ -39,5 +48,13 @@ public class States implements IState{
   @Override
   public String toString() {
     return this.states.toString();
+  }
+
+  public void add(States newStates) {
+    this.states.addAll(newStates.states);
+  }
+
+  public HashSet<State> getStates() {
+    return states;
   }
 }
