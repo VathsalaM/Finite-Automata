@@ -1,4 +1,4 @@
-package common;
+package automata;
 
 import org.json.JSONException;
 import org.json.JSONObject;

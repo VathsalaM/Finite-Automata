@@ -1,28 +1,41 @@
 package testRunner;
 
 
-import common.FiniteAutomata;
-import common.Parser;
-import common.Utils;
-import dfa.DFA;
-import dfa.Transition;
-import nfa.NFA;
+import automata.Builder;
+import automata.FiniteAutomata;
+import automata.Parser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class TestRunner {
 
+  private boolean runPassCases(FiniteAutomata fa, JSONArray pass_cases) throws JSONException {
+    for (int i = 0; i < pass_cases.length(); i++) {
+      if (!fa.Verify(pass_cases.get(i).toString())) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-  public static void main(String[] args) throws IOException, JSONException{
+  private boolean runFailCases(FiniteAutomata fa, JSONArray fail_cases) throws JSONException {
+    for (int i = 0; i < fail_cases.length(); i++) {
+      if (fa.Verify(fail_cases.get(i).toString())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public static void main(String[] args) throws IOException, JSONException {
 
     ArrayList<JSONObject> jsonObjects = new Parser().parse("examples.json");
 
-    int totalPassCount=0,totalFailCount=0,count = 0;
+    int totalPassCount = 0, totalFailCount = 0, count = 0;
     for (JSONObject rootObject : jsonObjects) {
       JSONArray pass_cases = rootObject.getJSONArray("pass-cases");
       JSONArray fail_cases = rootObject.getJSONArray("fail-cases");
@@ -30,34 +43,26 @@ public class TestRunner {
       String name = rootObject.get("name").toString();
       JSONObject tuple = rootObject.getJSONObject("tuple");
 
-      JSONArray jsonStates = tuple.getJSONArray("states");
-      JSONArray jsonAlphabets = tuple.getJSONArray("alphabets");
-      JSONArray jsonFinalStates = tuple.getJSONArray("final-states");
-      JSONObject jsonTransition = tuple.getJSONObject("delta");
-      String jsonInitialState = tuple.get("start-state").toString();
+      Builder builder = Builder.New(tuple,type);
 
-      Utils utils = new Utils();
-      HashSet<String> states = utils.getAlphabets(jsonStates);
-      HashSet<String> finalStates = utils.getAlphabets(jsonFinalStates);
-      HashSet<String> alphabets = utils.getAlphabets(jsonAlphabets);
-      Transition transition = utils.getTransition(jsonTransition);
-
-      FiniteAutomata fa ;
-      if(type.equals("dfa")){
-        fa = new DFA(states,alphabets,transition,jsonInitialState,finalStates);
-      }else{
-        fa = new NFA(states,alphabets,transition,jsonInitialState,finalStates);
+      FiniteAutomata fa;
+      if (type.equals("dfa")) {
+        fa = builder.buildDFA();
+      } else {
+        fa = builder.buildNFA();
       }
 
-      boolean result = utils.isRecognised(fa,pass_cases) && utils.isNotRecognised(fa,fail_cases);
+      TestRunner tr = new TestRunner();
 
-      String message = (++count) +". "+ name+": ";
-      if(result){
+      boolean result = tr.runPassCases(fa, pass_cases) && tr.runFailCases(fa, fail_cases);
+
+      String message = (++count) + ". " + name + ": ";
+      if (result) {
         totalPassCount++;
-        System.out.println(message+"pass");
-      }else {
+        System.out.println(message + "pass");
+      } else {
         totalFailCount++;
-        System.out.println(message+"fail");
+        System.out.println(message + "fail");
       }
     }
     System.out.println("\nTotal tests passing: " + totalPassCount);

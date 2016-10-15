@@ -2,3 +2,7 @@
 out
 src/tuples.json
 Finite-Automata.iml
+src/nfa/
+src/testRunner/
+test/JSONparserTest.java
+test/nfa/
