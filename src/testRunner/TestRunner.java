@@ -16,7 +16,7 @@ public class TestRunner {
 
   private boolean runPassCases(FiniteAutomata fa, JSONArray pass_cases) throws JSONException {
     for (int i = 0; i < pass_cases.length(); i++) {
-      if (!fa.Verify(pass_cases.get(i).toString())) {
+      if (!fa.verify(pass_cases.get(i).toString())) {
         return false;
       }
     }
@@ -25,7 +25,7 @@ public class TestRunner {
 
   private boolean runFailCases(FiniteAutomata fa, JSONArray fail_cases) throws JSONException {
     for (int i = 0; i < fail_cases.length(); i++) {
-      if (fa.Verify(fail_cases.get(i).toString())) {
+      if (fa.verify(fail_cases.get(i).toString())) {
         return false;
       }
     }
@@ -62,22 +62,21 @@ public class TestRunner {
         fa = ((NFA) builder.buildNFA()).ToDFA();
       }
 
-      System.out.println("Test executing: "+type);
       TestRunner tr = new TestRunner();
       boolean result = tr.runPassCases(fa, pass_cases) && tr.runFailCases(fa, fail_cases);
 
       String message = (++count) + ". " + name + ": ";
+
       if (result) {
         totalPassCount++;
         System.out.println(message + "pass");
-        System.out.println("pass_cases: " + pass_cases);
-        System.out.println("fail_cases: " + fail_cases);
       } else {
         totalFailCount++;
         System.out.println(message + "fail");
-        System.out.println("pass_cases: " + pass_cases);
-        System.out.println("fail_cases: " + fail_cases);
       }
+      System.out.println("\ttest_type:  "+type);
+      System.out.println("\tpass_cases: " + pass_cases);
+      System.out.println("\tfail_cases: " + fail_cases);
     }
     System.out.println("\nTotal tests passing: " + totalPassCount);
     System.out.println("Total tests failing: " + totalFailCount);
