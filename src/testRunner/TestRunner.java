@@ -33,7 +33,7 @@ public class TestRunner {
 
   public static void main(String[] args) throws IOException, JSONException {
 
-    ArrayList<JSONObject> jsonObjects = new Parser().parse("examples.json");
+    ArrayList<JSONObject> jsonObjects = new Parser().parse(args[0]);
 
     int totalPassCount = 0, totalFailCount = 0, count = 0;
     for (JSONObject rootObject : jsonObjects) {
@@ -43,7 +43,7 @@ public class TestRunner {
       String name = rootObject.get("name").toString();
       JSONObject tuple = rootObject.getJSONObject("tuple");
 
-      Builder builder = Builder.New(tuple,type);
+      Builder builder = Builder.New(tuple, type);
 
       FiniteAutomata fa;
       if (type.equals("dfa")) {
@@ -51,7 +51,11 @@ public class TestRunner {
       } else {
         fa = builder.buildNFA();
       }
-
+      if(args.length>1) {
+        if (!args[1].equals(type) && !args[1].equals("all")) {
+          continue;
+        }
+      }
       TestRunner tr = new TestRunner();
 
       boolean result = tr.runPassCases(fa, pass_cases) && tr.runFailCases(fa, fail_cases);
