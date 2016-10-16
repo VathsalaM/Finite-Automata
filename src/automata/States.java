@@ -1,10 +1,8 @@
 package automata;
 
 import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
 
-class States implements IState{
+class States implements IState {
 
   private HashSet<State> states;
 
@@ -12,23 +10,16 @@ class States implements IState{
     this.states = new HashSet<>();
   }
 
-  void add(State state){
-      this.states.add(state);
+  void add(State state) {
+    this.states.add(state);
   }
 
-  void remove(State state){
+  void remove(State state) {
     this.states.remove(state);
   }
 
-  boolean contains(State state){
+  boolean contains(State state) {
     return this.states.contains(state);
-  }
-  boolean contains(States otherStates){
-    boolean result = false;
-    for (State state : otherStates.states) {
-      result = this.states.contains(state);
-    }
-    return result;
   }
 
   int length() {
@@ -50,11 +41,29 @@ class States implements IState{
     return this.states.toString();
   }
 
-  public void add(States newStates) {
+  void add(States newStates) {
     this.states.addAll(newStates.states);
   }
 
-  public HashSet<State> getStates() {
+  HashSet<State> getStates() {
     return states;
+  }
+
+  boolean containsAtLeastOne(States otherStates) {
+    for (State state : otherStates.states) {
+      if (this.states.contains(state)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  States removeCommon(States prevStates) {
+    for (State state : prevStates.states) {
+      if (this.states.contains(state)) {
+        this.remove(state);
+      }
+    }
+    return this;
   }
 }

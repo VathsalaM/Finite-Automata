@@ -47,7 +47,7 @@ public class TestRunner {
       if (args.length > 1 && !args[1].equals(type) && !args[1].equals("all")) {
         continue;
       }
-      if (args.length > 2 && !args[2].equals(name)) {
+      if (args.length > 2 && !args[2].equals("-i") && !args[2].equals(name)) {
         continue;
       }
 
@@ -56,17 +56,23 @@ public class TestRunner {
       FiniteAutomata fa = null;
       if (type.equals("dfa")) {
         fa = builder.buildDFA();
-      } else if (type.equals("nfa")){
+      } else if (type.equals("nfa")) {
         fa = builder.buildNFA();
       } else {
-        fa = ((NFA) builder.buildNFA()).ToDFA();
+        fa = ((NFA) builder.buildNFA()).toDFA();
       }
 
+
       TestRunner tr = new TestRunner();
-      boolean result = tr.runPassCases(fa, pass_cases) && tr.runFailCases(fa, fail_cases);
+      boolean result = false;
+      try {
+        result = tr.runPassCases(fa, pass_cases) && tr.runFailCases(fa, fail_cases);
 
+      } catch (Error e) {
+        System.out.println("\tError: "+e.toString()+"\n");
+        result = false;
+      }
       String message = (++count) + ". " + name + ": ";
-
       if (result) {
         totalPassCount++;
         System.out.println(message + "pass");
@@ -74,9 +80,11 @@ public class TestRunner {
         totalFailCount++;
         System.out.println(message + "fail");
       }
-      System.out.println("\ttest_type:  "+type);
-      System.out.println("\tpass_cases: " + pass_cases);
-      System.out.println("\tfail_cases: " + fail_cases);
+      if (args[args.length - 1].equals("-i")) {
+        System.out.println("\ttest_type:  " + type);
+        System.out.println("\tpass_cases: " + pass_cases);
+        System.out.println("\tfail_cases: " + fail_cases);
+      }
     }
     System.out.println("\nTotal tests passing: " + totalPassCount);
     System.out.println("Total tests failing: " + totalFailCount);
