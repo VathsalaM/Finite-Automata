@@ -18,6 +18,10 @@ class States implements IState {
     this.states.remove(state);
   }
 
+  void remove(States otherStates) {
+    otherStates.states.stream().filter(state -> this.states.contains(state)).forEach(this::remove);
+  }
+
   boolean contains(State state) {
     return this.states.contains(state);
   }
@@ -56,14 +60,5 @@ class States implements IState {
       }
     }
     return false;
-  }
-
-  States removeCommon(States prevStates) {
-    for (State state : prevStates.states) {
-      if (this.states.contains(state)) {
-        this.remove(state);
-      }
-    }
-    return this;
   }
 }

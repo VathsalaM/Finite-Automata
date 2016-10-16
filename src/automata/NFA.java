@@ -18,14 +18,15 @@ public class NFA implements FiniteAutomata {
     this.finalStates = finalStates;
   }
 
-  private States getCurrentStates(States currentStates,States prevStates) {
+  private States getCurrentStates(States currentStates, States prevStates) {
     Alphabet epsilon = new Alphabet("e");
     States newStates = new States();
     newStates.add(currentStates);
     for (State state : currentStates.getStates()) {
-      States tempStates = (States) this.transition.Transit(state,epsilon);
-      if(tempStates!=null){
-        newStates.add(this.getCurrentStates(tempStates.removeCommon(prevStates),currentStates));
+      States tempStates = (States) this.transition.Transit(state, epsilon);
+      if (tempStates != null) {
+        tempStates.remove(prevStates);
+        newStates.add(this.getCurrentStates(tempStates, currentStates));
       }
     }
     return newStates;
@@ -34,24 +35,24 @@ public class NFA implements FiniteAutomata {
   public boolean verify(String string) {
     States currentStates = new States();
     currentStates.add(this.initialState);
-    currentStates = this.getCurrentStates(currentStates,new States());
+    currentStates = this.getCurrentStates(currentStates, new States());
     if (string.length() < 1) {
       return this.finalStates.containsAtLeastOne(currentStates);
     }
     for (String alphabet : string.split("")) {
       States newStates = new States();
       for (State state : currentStates.getStates()) {
-        States nextStates = (States) this.transition.Transit(state,new Alphabet(alphabet));
-        if(nextStates!=null){
+        States nextStates = (States) this.transition.Transit(state, new Alphabet(alphabet));
+        if (nextStates != null) {
           newStates.add(nextStates);
         }
       }
-      currentStates = getCurrentStates(newStates,new States());
+      currentStates = getCurrentStates(newStates, new States());
     }
     return this.finalStates.containsAtLeastOne(currentStates);
   }
 
   public DFA toDFA() {
-    return new DFA(this.states,this.alphabets,this.transition,this.initialState,this.finalStates);
+    return new DFA(this.states, this.alphabets, this.transition, this.initialState, this.finalStates);
   }
 }
