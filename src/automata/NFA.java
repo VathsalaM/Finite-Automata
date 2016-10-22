@@ -23,7 +23,7 @@ public class NFA implements FiniteAutomata {
     States newStates = new States();
     newStates.add(currentStates);
     for (State state : currentStates.getStates()) {
-      States tempStates = (States) this.transition.Transit(state, epsilon);
+      States tempStates = (States) this.transition.transit(state, epsilon);
       if (tempStates != null) {
         tempStates.remove(prevStates);
         newStates.add(this.getCurrentStates(tempStates, currentStates));
@@ -39,10 +39,11 @@ public class NFA implements FiniteAutomata {
     if (string.length() < 1) {
       return this.finalStates.containsAtLeastOne(currentStates);
     }
-    for (String alphabet : string.split("")) {
+    String[] alphabets = string.split("");
+    for (String alphabet : alphabets) {
       States newStates = new States();
       for (State state : currentStates.getStates()) {
-        States nextStates = (States) this.transition.Transit(state, new Alphabet(alphabet));
+        States nextStates = (States) this.transition.transit(state, new Alphabet(alphabet));
         if (nextStates != null) {
           newStates.add(nextStates);
         }
@@ -53,6 +54,7 @@ public class NFA implements FiniteAutomata {
   }
 
   public DFA toDFA() {
+
     return new DFA(this.states, this.alphabets, this.transition, this.initialState, this.finalStates);
   }
 }

@@ -54,12 +54,16 @@ public class TestRunner {
       Builder builder = Builder.New(tuple, type);
 
       FiniteAutomata fa = null;
-      if (type.equals("dfa")) {
-        fa = builder.buildDFA();
-      } else if (type.equals("nfa")) {
-        fa = builder.buildNFA();
-      } else {
-        fa = ((NFA) builder.buildNFA()).toDFA();
+      switch (type) {
+        case "dfa":
+          fa = builder.buildDFA();
+          break;
+        case "nfa":
+          fa = builder.buildNFA();
+          break;
+        default:
+          fa = ((NFA) builder.buildNFA()).toDFA();
+          break;
       }
 
 

@@ -21,7 +21,7 @@ class DFA implements FiniteAutomata {
   public boolean verify(String string) {
     State currentState = this.initialState;
     for (String alphabet : string.split("")) {
-      currentState = (State) this.transition.Transit(currentState, new Alphabet(alphabet));
+      currentState = (State) this.transition.transit(currentState, new Alphabet(alphabet));
     }
     return this.finalStates.contains(currentState);
   }

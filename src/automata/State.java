@@ -1,6 +1,8 @@
 package automata;
 
-class State implements IState{
+import java.util.HashSet;
+
+class State{
   private final String name;
 
   State(String name) {

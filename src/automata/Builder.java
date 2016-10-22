@@ -49,13 +49,13 @@ public class Builder {
       Iterator<?> stateKeys = states.keys();
       while (stateKeys.hasNext()) {
         String alphabet = (String) stateKeys.next();
-        IState nextState;
+        Object nextState;
         if (type.equals("dfa")) {
           nextState = new State(states.get(alphabet).toString());
         } else {
           nextState = createStates(jsonTransition.getJSONObject(key).getJSONArray(alphabet));
         }
-        transition.Add(new State(key), new Alphabet(alphabet), nextState);
+        transition.add(new State(key), new Alphabet(alphabet), nextState);
       }
     }
     return transition;

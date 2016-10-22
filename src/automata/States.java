@@ -2,7 +2,7 @@ package automata;
 
 import java.util.HashSet;
 
-class States implements IState {
+class States{
 
   private HashSet<State> states;
 

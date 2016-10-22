@@ -2,26 +2,26 @@ package automata;
 
 import java.util.HashMap;
 
-public class Transition {
-  private HashMap<State, HashMap<Alphabet, IState>> transitions;
+class Transition {
+  private HashMap<State, HashMap<Alphabet, Object>> transitions;
 
   Transition() {
     this.transitions = new HashMap<>();
   }
 
-  void Add(State currentState, Alphabet alphabet, IState nextState) {
+  void add(State currentState, Alphabet alphabet, Object nextState) {
     if (this.transitions.containsKey(currentState)) {
-      HashMap<Alphabet, IState> oldValues = this.transitions.get(currentState);
+      HashMap<Alphabet, Object> oldValues = this.transitions.get(currentState);
       oldValues.put(alphabet, nextState);
       return;
     }
-    HashMap<Alphabet, IState> valueStatePair = new HashMap<>();
+    HashMap<Alphabet, Object> valueStatePair = new HashMap<>();
     valueStatePair.put(alphabet, nextState);
     this.transitions.put(currentState, valueStatePair);
   }
 
-  IState Transit(State currentState, Alphabet alphabet) {
-    IState result;
+  Object transit(Object currentState, Alphabet alphabet) {
+    Object result;
     try {
       result = this.transitions.get(currentState).get(alphabet);
     }catch (NullPointerException e){
