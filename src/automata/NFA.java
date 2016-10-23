@@ -1,6 +1,8 @@
 package automata;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class NFA implements FiniteAutomata {
 
@@ -18,14 +20,14 @@ public class NFA implements FiniteAutomata {
     this.finalStates = finalStates;
   }
 
-  private States getCurrentStates(States currentStates, States prevStates) {
+  States getCurrentStates(States currentStates, States visitedStates) {
     Alphabet epsilon = new Alphabet("e");
     States newStates = new States();
     newStates.add(currentStates);
     for (State state : currentStates.getStates()) {
       States tempStates = (States) this.transition.transit(state, epsilon);
       if (tempStates != null) {
-        tempStates.remove(prevStates);
+        tempStates.remove(visitedStates);
         newStates.add(this.getCurrentStates(tempStates, currentStates));
       }
     }
@@ -33,6 +35,7 @@ public class NFA implements FiniteAutomata {
   }
 
   public boolean verify(String string) {
+    System.out.println(this.transition);
     States currentStates = new States();
     currentStates.add(this.initialState);
     currentStates = this.getCurrentStates(currentStates, new States());
@@ -48,13 +51,64 @@ public class NFA implements FiniteAutomata {
           newStates.add(nextStates);
         }
       }
-      currentStates = getCurrentStates(newStates, new States());
+      currentStates = this.getCurrentStates(newStates, new States());
     }
     return this.finalStates.containsAtLeastOne(currentStates);
   }
 
   public DFA toDFA() {
+//    States possibleCombinations = this.states.getPossibleCombinations();
+    States newStates = new States();
+    newStates.add(initialState);
+    Transition newTransition = new Transition();
+    String newInitialState = this.getCurrentStates(newStates, new States()).joinStateValues("");
+    System.out.println("NFA transition: "+this.transition);
+    for (State state : this.states.getStates()) {
+//      System.out.println("==============================================================");
+//      System.out.println("newState: " + state);
+      States newState = new States();
+      newState.add(state);
+      States start = getCurrentStates(newState, new States());
+      String startingKey = start.joinStateValues("");
+      States end = null;
+      HashSet<State> key = start.getStates();
+      if (key.size() > 1) {
+        key.remove(state);
+      }
+//      System.out.println("key: " + key);
+      for (State state1 : key) {
+//        System.out.println("==========================================");
+//        System.out.println("state1: "+state1);
 
-    return new DFA(this.states, this.alphabets, this.transition, this.initialState, this.finalStates);
+        HashMap<Alphabet,Object> transit = this.transition.getTransit(state1);
+//        System.out.println("transit: "+transit);
+        for (Map.Entry<Alphabet, Object> entry : transit.entrySet())
+        {
+          State destinationState = (State) ((States) entry.getValue()).getStates().toArray()[0];
+          newTransition.add(new State(startingKey), entry.getKey(), destinationState);
+//          System.out.println(entry.getKey() + "/" + entry.getValue());
+        }
+
+
+
+
+//        for (Alphabet alphabet : this.alphabets) {
+//          System.out.println("===================");
+//          System.out.println("Alphabet: "+alphabet);
+//          Object transit = this.transition.transit(state1, alphabet);
+//          State destinationState = new State("q0");
+//          if (transit != null) {
+//            System.out.println("transit: "+transit);
+//            destinationState = (State) ((States) transit).getStates().toArray()[0];
+//          }
+//          System.out.println("start: "+start);
+//          newTransition.add(new State(startingKey), alphabet, destinationState);
+//          System.out.println("newTransiton: "+newTransition);
+//        }
+      }
+    }
+//    System.out.println("end: newTransition: "+newTransition);
+//    Transition transition = this.transition.createDFATransitions(possibleCombinations, this.initialState);
+    return new DFA(this.states, this.alphabets, newTransition, new State(newInitialState), this.finalStates);
   }
 }
