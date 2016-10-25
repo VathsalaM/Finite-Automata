@@ -56,59 +56,83 @@ public class NFA implements FiniteAutomata {
     return this.finalStates.containsAtLeastOne(currentStates);
   }
 
-  public DFA toDFA() {
-//    States possibleCombinations = this.states.getPossibleCombinations();
-    States newStates = new States();
-    newStates.add(initialState);
-    Transition newTransition = new Transition();
-    String newInitialState = this.getCurrentStates(newStates, new States()).joinStateValues("");
-    System.out.println("NFA transition: "+this.transition);
-    for (State state : this.states.getStates()) {
-//      System.out.println("==============================================================");
-//      System.out.println("newState: " + state);
-      States newState = new States();
-      newState.add(state);
-      States start = getCurrentStates(newState, new States());
-      String startingKey = start.joinStateValues("");
-      States end = null;
-      HashSet<State> key = start.getStates();
-      if (key.size() > 1) {
-        key.remove(state);
-      }
-//      System.out.println("key: " + key);
-      for (State state1 : key) {
-//        System.out.println("==========================================");
-//        System.out.println("state1: "+state1);
-
-        HashMap<Alphabet,Object> transit = this.transition.getTransit(state1);
-//        System.out.println("transit: "+transit);
-        for (Map.Entry<Alphabet, Object> entry : transit.entrySet())
-        {
-          State destinationState = (State) ((States) entry.getValue()).getStates().toArray()[0];
-          newTransition.add(new State(startingKey), entry.getKey(), destinationState);
-//          System.out.println(entry.getKey() + "/" + entry.getValue());
+  Transition sample(Transition currentTransition,States currentStates,State initialState,States prevStates){
+    HashSet<State> key = currentStates.getStates();
+    if (key.size() > 1) {
+      key.remove(initialState);
+    }
+    String newKeyValue = currentStates.joinStateValues(",");
+    HashMap<Alphabet, States> alphabetStatesHashMap = new HashMap<>();
+    for (Alphabet alphabet : this.alphabets) {
+      for (State individualState : key) {
+        Object transit = this.transition.transit(individualState, alphabet);
+        if (transit != null) {
+          States tempStates = new States();
+          if (alphabetStatesHashMap.containsKey(alphabet)) {
+            tempStates = alphabetStatesHashMap.get(alphabet);
+          }
+          State destinationState = (State) ((States) transit).getStates().toArray()[0];
+          tempStates.add(destinationState);
+          alphabetStatesHashMap.put(alphabet, tempStates);
         }
-
-
-
-
-//        for (Alphabet alphabet : this.alphabets) {
-//          System.out.println("===================");
-//          System.out.println("Alphabet: "+alphabet);
-//          Object transit = this.transition.transit(state1, alphabet);
-//          State destinationState = new State("q0");
-//          if (transit != null) {
-//            System.out.println("transit: "+transit);
-//            destinationState = (State) ((States) transit).getStates().toArray()[0];
-//          }
-//          System.out.println("start: "+start);
-//          newTransition.add(new State(startingKey), alphabet, destinationState);
-//          System.out.println("newTransiton: "+newTransition);
-//        }
       }
     }
-//    System.out.println("end: newTransition: "+newTransition);
-//    Transition transition = this.transition.createDFATransitions(possibleCombinations, this.initialState);
-    return new DFA(this.states, this.alphabets, newTransition, new State(newInitialState), this.finalStates);
+    for (Map.Entry<Alphabet, States> entry : alphabetStatesHashMap.entrySet())
+    {
+      States destinationStates = (States) entry.getValue();
+      State destinationState = new State( destinationStates.joinStateValues(""));
+      currentTransition.add(new State(newKeyValue), entry.getKey(),destinationState);
+      if(currentStates.equals(destinationStates)){
+        return currentTransition;
+      }
+      if(destinationStates.equals(prevStates)){
+        return currentTransition;
+      }
+      sample(currentTransition,destinationStates,null,currentStates);
+    }
+    return currentTransition;
+  }
+
+  Transition getTransition(Transition currentTransition,States newStates){
+    HashSet<State> states = newStates.getStates();
+    for (State state : states) {
+      States tempState = new States();
+      tempState.add(state);
+      States currentStates = this.getCurrentStates(tempState, newStates);
+      currentTransition = sample(currentTransition,currentStates,state,new States());
+    }
+    States currentTransitionStates = currentTransition.getStates();
+    HashSet<State> currentStates = currentTransitionStates.getStates();
+    State deadState = new State("q0");
+    for (Alphabet alphabet : this.alphabets) {
+      for (State currentState : currentStates) {
+        State state =  (State) currentTransition.transit(currentState,alphabet);
+        if(state==null){
+          currentTransition.add(currentState,alphabet,deadState);
+        }
+      }
+      currentTransition.add(deadState,alphabet,deadState);
+    }
+    return currentTransition;
+  }
+
+  public DFA toDFA() {
+    System.out.println("finalStates: "+this.finalStates);
+    System.out.println("NFA Transition: "+this.transition);
+    States tempStates = new States();
+    tempStates.add(this.initialState);
+    Transition newTransition = getTransition(new Transition(),tempStates);
+
+    System.out.println("DFA Transition: "+newTransition);
+    States newInitialState = this.getCurrentStates(tempStates,new States());
+    if (newInitialState.getStates().size() > 1) {
+      newInitialState.remove(initialState);
+    }
+    String newFinalState = this.finalStates.joinStateValues(",");
+    States newFinalStates = new States();
+    newFinalStates.add(new State(newFinalState));
+    newFinalStates.add(this.finalStates);
+    System.out.println("newFinalState: "+newFinalStates);
+    return new DFA(this.states, this.alphabets, newTransition, new State(newInitialState.joinStateValues(",")), newFinalStates);
   }
 }

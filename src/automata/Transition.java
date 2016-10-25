@@ -1,6 +1,7 @@
 package automata;
 
 import java.util.HashMap;
+import java.util.Set;
 
 class Transition {
   private HashMap<State, HashMap<Alphabet, Object>> transitions;
@@ -35,9 +36,12 @@ class Transition {
     return this.transitions.toString();
   }
 
-  HashMap<Alphabet, Object> getTransit(State state) {
-//    System.out.println("state in transition: "+state);
-//    System.out.println(this.transitions);
-    return this.transitions.get(state);
+  States getStates() {
+    States states = new States();
+    Set<State> tempStates = this.transitions.keySet();
+    for (State tempState : tempStates) {
+      states.add(tempState);
+    }
+    return states;
   }
 }

@@ -17,6 +17,7 @@ public class TestRunner {
   private boolean runPassCases(FiniteAutomata fa, JSONArray pass_cases) throws JSONException {
     for (int i = 0; i < pass_cases.length(); i++) {
       if (!fa.verify(pass_cases.get(i).toString())) {
+        System.out.println("failed.......... passcases : "+pass_cases.get(i).toString());
         return false;
       }
     }
