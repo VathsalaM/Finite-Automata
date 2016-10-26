@@ -56,7 +56,7 @@ public class NFA implements FiniteAutomata {
     return this.finalStates.containsAtLeastOne(currentStates);
   }
 
-  Transition sample(Transition currentTransition,States currentStates,State initialState,States prevStates){
+  Transition addTransition(Transition currentTransition, States currentStates, State initialState, States prevStates){
     HashSet<State> key = currentStates.getStates();
     if (key.size() > 1) {
       key.remove(initialState);
@@ -88,7 +88,7 @@ public class NFA implements FiniteAutomata {
       if(destinationStates.equals(prevStates)){
         return currentTransition;
       }
-      sample(currentTransition,destinationStates,null,currentStates);
+      addTransition(currentTransition,destinationStates,null,currentStates);
     }
     return currentTransition;
   }
@@ -99,7 +99,7 @@ public class NFA implements FiniteAutomata {
       States tempState = new States();
       tempState.add(state);
       States currentStates = this.getCurrentStates(tempState, newStates);
-      currentTransition = sample(currentTransition,currentStates,state,new States());
+      currentTransition = addTransition(currentTransition,currentStates,state,new States());
     }
     States currentTransitionStates = currentTransition.getStates();
     HashSet<State> currentStates = currentTransitionStates.getStates();
