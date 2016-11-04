@@ -62,4 +62,9 @@ class Transition {
   public Set<Object> getKeys() {
     return this.transitions.keySet();
   }
+
+  public boolean alreadyPresent(States destState) {
+//    System.out.println("==>"+this.transitions.keySet().contains(destState));
+    return this.transitions.keySet().contains(destState);
+  }
 }

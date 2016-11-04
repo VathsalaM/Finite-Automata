@@ -65,11 +65,11 @@ public class NFA implements FiniteAutomata {
     States DFAFinalStates = this.createDFAStates(DFAStatesMap, DFAMultipleFinalStates);
     Transition DFATransition = this.convertTransitionToDFATransition(DFATransitionWithMultipleStates, DFAStatesMap);
     State DFAInitialState = DFAStatesMap.get(initialStates);
-    System.out.println("NFATransition: " + this.transition);
-    System.out.println("transition" + DFATransition);
-    System.out.println("DFAFinalStates" + DFAFinalStates);
-    System.out.println("DFAInitialState" + DFAInitialState);
-    System.out.println("DFAStates" + DFAStates);
+//    System.out.println("NFATransition: " + this.transition);
+//    System.out.println("transition" + DFATransition);
+//    System.out.println("DFAFinalStates" + DFAFinalStates);
+//    System.out.println("DFAInitialState" + DFAInitialState);
+//    System.out.println("DFAStates" + DFAStates);
     return new DFA(DFAStates, this.alphabets, DFATransition, DFAInitialState, DFAFinalStates);
   }
 
@@ -123,13 +123,15 @@ public class NFA implements FiniteAutomata {
 //    System.out.println("initialStates: "+initialStates);
 //    System.out.println("prevStates: "+prevStates);
     HashSet<State> currentStates = initialStates.getStates();
-    if (prevStates.contains(initialStates)) {
+    if (prevStates.equals(initialStates) || transition.alreadyPresent(initialStates)) {
       return transition;
     }
     for (State currentState : currentStates) {
       for (Alphabet alphabet : this.alphabets) {
         States transit = (States) this.transition.transit(currentState, alphabet);
+//        System.out.println("transit: "+transit);
         if (transit != null) {
+//          System.out.println("=====>"+this.getCurrentStates(new States().add(transit), new States()));
           transition.add(new States(currentStates), alphabet, this.getCurrentStates(new States().add(transit), new States()));
         }
       }
@@ -140,10 +142,11 @@ public class NFA implements FiniteAutomata {
         if (prevStates.equals(destState)) {
           return transition;
         }
-//        System.out.println("transit: "+destState);
+//        System.out.println("dest: "+destState);
         transition = createDFATransition(transition, destState, initialStates);
       }
     }
+//    System.out.println("==="+transition);
     return transition;
   }
 }
