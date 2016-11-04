@@ -2,7 +2,7 @@ package automata;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class TransitionTest {
   @Test
@@ -16,10 +16,10 @@ public class TransitionTest {
     States states1 = new States().add(new State("q1")).add(new State("q2")).add(new State("q5"));
     States state2 = new States().add(new State("q1")).add(new State("q2")).add(new State("q5"));
     States dst = new States().add(new State("q3")).add(new State("q5"));
-    transition.add(states1,new Alphabet("0"),dst);
+    transition.add(states1, new Alphabet("0"), dst);
     Object transit = transition.transit(state2, new Alphabet("0"));
     System.out.println(transit);
-    assertEquals((States)transit,dst);
+    assertEquals((States) transit, dst);
   }
 
 }

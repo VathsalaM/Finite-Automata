@@ -1,8 +1,6 @@
 package automata;
 
-import java.util.HashSet;
-
-class State{
+class State {
   private final String name;
 
   State(String name) {

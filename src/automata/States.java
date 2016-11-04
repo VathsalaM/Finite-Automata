@@ -36,9 +36,9 @@ class States {
 
   boolean contains(States otherStates) {
     for (State state : otherStates.states) {
-     if(!this.states.contains(state)){
-       return false;
-     }
+      if (!this.states.contains(state)) {
+        return false;
+      }
     }
     return true;
   }
@@ -65,7 +65,7 @@ class States {
 
   States add(States newStates) {
     this.states.addAll(newStates.states);
-    return this ;
+    return this;
   }
 
   HashSet<State> getStates() {

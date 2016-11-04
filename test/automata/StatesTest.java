@@ -38,7 +38,7 @@ public class StatesTest {
 
     States states2 = new States();
     states2.add(new State("q1")).add(new State("q2")).add(new State("q5"));
-    assertEquals(states1,states2);
+    assertEquals(states1, states2);
   }
 
 }

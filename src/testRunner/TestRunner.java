@@ -17,7 +17,7 @@ public class TestRunner {
   private boolean runPassCases(FiniteAutomata fa, JSONArray pass_cases) throws JSONException {
     for (int i = 0; i < pass_cases.length(); i++) {
       if (!fa.verify(pass_cases.get(i).toString())) {
-        System.out.println("failed.......... passcases : "+pass_cases.get(i).toString());
+        System.out.println("failed.......... passcases : " + pass_cases.get(i).toString());
         return false;
       }
     }
@@ -74,7 +74,7 @@ public class TestRunner {
         result = tr.runPassCases(fa, pass_cases) && tr.runFailCases(fa, fail_cases);
 
       } catch (Error e) {
-        System.out.println("\tError: "+e.toString()+"\n");
+        System.out.println("\tError: " + e.toString() + "\n");
         result = false;
       }
       String message = (++count) + ". " + name + ": ";

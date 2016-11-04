@@ -70,7 +70,7 @@ public class Builder {
 
     States states = createStates(jsonStates);
     HashSet<Alphabet> alphabets = createAlphabetSet(jsonAlphabets);
-    Transition transition = createTransition(jsonTransition,type);
+    Transition transition = createTransition(jsonTransition, type);
     State initialState = new State(jsonInitialState);
     States finalStates = createStates(jsonFinalStates);
 
@@ -78,9 +78,10 @@ public class Builder {
   }
 
   public FiniteAutomata buildDFA() {
-    return new DFA(this.states,this.alphabets,this.transition,this.initialState,this.finalStates);
+    return new DFA(this.states, this.alphabets, this.transition, this.initialState, this.finalStates);
   }
 
   public FiniteAutomata buildNFA() {
-    return new NFA(this.states,this.alphabets,this.transition,this.initialState,this.finalStates);  }
+    return new NFA(this.states, this.alphabets, this.transition, this.initialState, this.finalStates);
+  }
 }
