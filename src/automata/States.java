@@ -17,8 +17,9 @@ class States {
     this.states = states;
   }
 
-  void add(State state) {
+  States add(State state) {
     this.states.add(state);
+    return this;
   }
 
   void remove(State state) {
@@ -33,12 +34,22 @@ class States {
     return this.states.contains(state);
   }
 
+  boolean contains(States otherStates) {
+    for (State state : otherStates.states) {
+     if(!this.states.contains(state)){
+       return false;
+     }
+    }
+    return true;
+  }
+
   int length() {
     return this.states.size();
   }
 
   @Override
   public boolean equals(Object obj) {
+//    System.out.println("this: "+this.states);
     return obj instanceof States && this.states.equals(((States) obj).states);
   }
 
@@ -52,8 +63,9 @@ class States {
     return this.states.toString();
   }
 
-  void add(States newStates) {
+  States add(States newStates) {
     this.states.addAll(newStates.states);
+    return this ;
   }
 
   HashSet<State> getStates() {
@@ -91,5 +103,10 @@ class States {
     return this.states.stream()
             .map(State::toString)
             .collect(Collectors.joining(""));
+  }
+
+  public State generateState() {
+    String state = this.states.toString();
+    return new State(state);
   }
 }

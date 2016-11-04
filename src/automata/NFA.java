@@ -2,7 +2,7 @@ package automata;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.Set;
 
 public class NFA implements FiniteAutomata {
 
@@ -35,7 +35,6 @@ public class NFA implements FiniteAutomata {
   }
 
   public boolean verify(String string) {
-    System.out.println(this.transition);
     States currentStates = new States();
     currentStates.add(this.initialState);
     currentStates = this.getCurrentStates(currentStates, new States());
@@ -56,83 +55,101 @@ public class NFA implements FiniteAutomata {
     return this.finalStates.containsAtLeastOne(currentStates);
   }
 
-  Transition addTransition(Transition currentTransition, States currentStates, State initialState, States prevStates){
-    HashSet<State> key = currentStates.getStates();
-    if (key.size() > 1) {
-      key.remove(initialState);
+  public DFA toDFA(){
+    System.out.println("==>1");
+    States initialStates = new States();
+    System.out.println("==>2");
+    initialStates.add(this.getCurrentStates((new States()).add(this.initialState),new States()));
+    System.out.println("==>3");
+    System.out.println("NFATransition: "+this.transition);
+    Transition DFATransitionWithMultipleStates = this.createDFATransition(new Transition(),initialStates,new States());
+    System.out.println("==>4");
+    HashSet<States> DFAMultipleFinalStates = this.createDFAFinalStates(DFATransitionWithMultipleStates,this.finalStates);
+    System.out.println("==>5");
+    HashMap<States,State> DFAStatesMap = this.createDFAStatesMap(DFATransitionWithMultipleStates);
+    System.out.println("==>6");
+    States DFAStates = this.createDFAStates(DFAStatesMap,DFATransitionWithMultipleStates.getStatesForMultipleState());
+    System.out.println("==>7");
+    States DFAFinalStates = this.createDFAStates(DFAStatesMap,DFAMultipleFinalStates);
+    System.out.println("==>8");
+    Transition DFATransition = this.convertTransitionToDFATransition(DFATransitionWithMultipleStates,DFAStatesMap);
+    System.out.println("==>9");
+    State DFAInitialState = DFAStatesMap.get(initialStates);
+    System.out.println("==>10");
+    return new DFA(DFAStates,this.alphabets,DFATransition,DFAInitialState,DFAFinalStates);
+  }
+
+  private Transition convertTransitionToDFATransition(Transition dfaTransitionWithMultipleStates, HashMap<States, State> dfaStatesMap) {
+    Transition transition = new Transition();
+    HashSet<States> statesForMultipleState = dfaTransitionWithMultipleStates.getStatesForMultipleState();
+    for (States states1 : statesForMultipleState) {
+      for (Alphabet alphabet : this.alphabets) {
+        States dest = (States) dfaTransitionWithMultipleStates.transit(states1, alphabet);
+        transition.add(dfaStatesMap.get(states1),alphabet,dfaStatesMap.get(dest));
+      }
     }
-    String newKeyValue = currentStates.joinStateValues(",");
-    HashMap<Alphabet, States> alphabetStatesHashMap = new HashMap<>();
-    for (Alphabet alphabet : this.alphabets) {
-      for (State individualState : key) {
-        Object transit = this.transition.transit(individualState, alphabet);
-        if (transit != null) {
-          States tempStates = new States();
-          if (alphabetStatesHashMap.containsKey(alphabet)) {
-            tempStates = alphabetStatesHashMap.get(alphabet);
-          }
-          State destinationState = (State) ((States) transit).getStates().toArray()[0];
-          tempStates.add(destinationState);
-          alphabetStatesHashMap.put(alphabet, tempStates);
+    return transition;
+  }
+
+  private States createDFAStates(HashMap<States, State> dfaStatesMap, HashSet<States> dfaMultipleFinalStates) {
+    States states = new States();
+    for (States dfaMultipleFinalState : dfaMultipleFinalStates) {
+      states.add(dfaStatesMap.get(dfaMultipleFinalState));
+    }
+    return states;
+  }
+
+  private HashMap<States, State> createDFAStatesMap(Transition transition) {
+    HashMap<States,State> DFAStatesMap = new HashMap<>();
+    HashSet<States> statesForMultipleState = transition.getStatesForMultipleState();
+    for (States states : statesForMultipleState) {
+      DFAStatesMap.put(states,states.generateState());
+    }
+    return DFAStatesMap;
+  }
+
+  private HashSet<States> createDFAFinalStates(Transition dfaTransition, States finalStates) {
+    HashSet<States> DFAFinalStates = new HashSet<>();
+    Set<Object> keys = dfaTransition.getKeys();
+    for (Object key : keys) {
+      HashSet<State> NFAFinalStates = finalStates.getStates();
+      for (State nfaState :
+              NFAFinalStates) {
+        if(((States)key).contains(nfaState)){
+          DFAFinalStates.add((States) key);
         }
       }
     }
-    for (Map.Entry<Alphabet, States> entry : alphabetStatesHashMap.entrySet())
-    {
-      States destinationStates = (States) entry.getValue();
-      State destinationState = new State( destinationStates.joinStateValues(""));
-      currentTransition.add(new State(newKeyValue), entry.getKey(),destinationState);
-      if(currentStates.equals(destinationStates)){
-        return currentTransition;
-      }
-      if(destinationStates.equals(prevStates)){
-        return currentTransition;
-      }
-      addTransition(currentTransition,destinationStates,null,currentStates);
-    }
-    return currentTransition;
+    return DFAFinalStates;
   }
 
-  Transition getTransition(Transition currentTransition,States newStates){
-    HashSet<State> states = newStates.getStates();
-    for (State state : states) {
-      States tempState = new States();
-      tempState.add(state);
-      States currentStates = this.getCurrentStates(tempState, newStates);
-      currentTransition = addTransition(currentTransition,currentStates,state,new States());
+  private Transition createDFATransition(Transition transition, States initialStates,States prevStates) {
+    System.out.println("=============================");
+    System.out.println("transition: "+transition);
+    System.out.println("initialStates: "+initialStates);
+    System.out.println("prevStates: "+prevStates);
+    HashSet<State> currentStates = initialStates.getStates();
+    if(prevStates.contains(initialStates)){
+      return transition;
     }
-    States currentTransitionStates = currentTransition.getStates();
-    HashSet<State> currentStates = currentTransitionStates.getStates();
-    State deadState = new State("q0");
-    for (Alphabet alphabet : this.alphabets) {
-      for (State currentState : currentStates) {
-        State state =  (State) currentTransition.transit(currentState,alphabet);
-        if(state==null){
-          currentTransition.add(currentState,alphabet,deadState);
+    for (State currentState : currentStates) {
+      for (Alphabet alphabet : this.alphabets) {
+        States transit = (States)this.transition.transit(currentState, alphabet);
+        if(transit != null){
+          transition.add(new States(currentStates),alphabet,this.getCurrentStates(new States().add(transit),new States()));
         }
       }
-      currentTransition.add(deadState,alphabet,deadState);
     }
-    return currentTransition;
-  }
-
-  public DFA toDFA() {
-    System.out.println("finalStates: "+this.finalStates);
-    System.out.println("NFA Transition: "+this.transition);
-    States tempStates = new States();
-    tempStates.add(this.initialState);
-    Transition newTransition = getTransition(new Transition(),tempStates);
-
-    System.out.println("DFA Transition: "+newTransition);
-    States newInitialState = this.getCurrentStates(tempStates,new States());
-    if (newInitialState.getStates().size() > 1) {
-      newInitialState.remove(initialState);
+    for (Alphabet alphabet : this.alphabets) {
+      States destState = (States)transition.transit(initialStates, alphabet);
+      if(destState != null){
+       if(prevStates.equals(destState)) {
+         return transition;
+       }
+        System.out.println("transit: "+destState);
+        transition = createDFATransition(transition,destState,initialStates);
+      }
     }
-    String newFinalState = this.finalStates.joinStateValues(",");
-    States newFinalStates = new States();
-    newFinalStates.add(new State(newFinalState));
-    newFinalStates.add(this.finalStates);
-    System.out.println("newFinalState: "+newFinalStates);
-    return new DFA(this.states, this.alphabets, newTransition, new State(newInitialState.joinStateValues(",")), newFinalStates);
+    return transition;
   }
 }
